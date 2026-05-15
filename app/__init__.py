@@ -37,3 +37,4 @@ def create_app(config_class=None):
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
     return app
+from app import models
