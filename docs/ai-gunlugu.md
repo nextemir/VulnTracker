@@ -91,11 +91,17 @@ Teşhis: Modellerin app/__init__.py içerisinde app_context (uygulama bağlamı)
 ![Modern Mapped ve Enum Yapısı](./img/oturum2_models.png)
 *Görsel 1: SQLAlchemy 2.0 standartlarında hazırlanan veri modelleri.*
 
+<br>
+
 ![Flask-Migrate Terminal Çıktısı](./img/oturum2_terminal.png)
 *Görsel 2: Veritabanı şemasının terminal üzerinden mühürlenme anı.*
 
+<br>
+
 ![Binary Veritabanı Dosyası](./img/oturum2_db_file.png)
 *Görsel 3: instance/ klasörü altında oluşan vulntracker.db dosyası.*
+
+<br>
 
 Bu Oturumdan Öğrendiğim
 Yapay zeka ile geliştirme yaparken "Application Factory" gibi kompleks mimarilerde, AI'nın bazen dosyalar arası bağlantıları (import) atlayabildiğini gördüm. Bu noktada terminal çıktılarını doğru okumanın ve manuel müdahale yeteneğinin (Terminal Hakimiyeti) projeyi kilitleyen hataları çözmede ne kadar kritik olduğunu tecrübe ettim.
