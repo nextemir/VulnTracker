@@ -1,118 +1,99 @@
-AI Geliştirme Günlüğü - VulnTracker
-Oturum 1 — 15 Mayıs 2026 — 17:00 - 17:45
-Hedef
-Flask 3.x tabanlı, "Application Factory" mimarisine sahip VulnTracker (Siber Güvenlik Zafiyet Takip Portalı) proje iskeletini kurmak.
+# VulnTracker - AI Geliştirme Günlüğü
 
-GitHub bağlantısını gerçekleştirmek ve temel güvenlik yapılandırmasını (.env) tamamlamak.
+## Oturum 1 [14.05.2026] [14:00 - 15:30]
 
-Kullandığım Mod ve Model
-Mod: Plan Mode (Karmaşık mimari kurulumu için tercih edildi).
+### Hedef
+Proje iskeletinin oluşturulması, Application Factory mimarisinin kurulması ve temel klasör yapısının konfigüre edilmesi.
 
-Model: Gemini 3.1 Pro (High)
+### Kullandığım Mod ve Model
+* **Mod:** Plan Modu
+* **Model:** Gemini 3 Pro (Antigravity)
 
-Görünüm: Manager View
+### Verdiğim Promptlar
+1. **Ana İstek:** Flask 3.x and Python 3.12 uyumlu, uzantıları (extensions) bağımsız yükleyen ve dinamik config alan bir Application Factory yapısı ve temel klasör şeması oluşturulması.
 
-Verdiğim Promptlar
-Kurulum Promptu: Flask 3.x, SQLAlchemy 2.x ve Blueprint yapısını (auth, main) içeren, klasör hiyerarşisi netleştirilmiş profesyonel bir iskelet kurulumu istendi.
+### Ajanın Önerdiği Plan
+Ajan; `run.py`, `config.py`, `app/__init__.py` ve blueprint klasörlerini içeren, bağımlılıkları birbirinden ayıran modüler bir geliştirme planı sundu.
 
-Denetim Promptu: Ajanın sunduğu planı doğrulamak; .env güvenliği ve SQLAlchemy 2.x modern yazım standartları üzerine teknik sorgulama yapıldı.
+### Plan'da Sorduysam / Müdahalelerim
+* Standart tek dosyalık Flask yapısı yerine gelecekte genişletilebilir olması adına **Blueprint** yapısını şart koştum.
+* Hassas verilerin sızmasını önlemek için `.env` (python-dotenv) desteğinin mimariye ilk adımdan eklenmesini sağladım.
 
-Ajanın Önerdiği Plan
-app/ (__init__.py, models.py), app/main/, app/auth/, static/, templates/ ve migrations/ klasörlerinin oluşturulması.
+### Karşılaştığım Hatalar ve Çözümler
+* Herhangi bir mimari hata alınmadı, paket bağımlılıkları pürüzsüz yüklendi.
 
-Kök dizinde config.py, run.py, .env, .gitignore ve requirements.txt dosyalarının hazırlanması.
+### Bu Oturumdan Öğrendiğim
+Geleneksel Flask projelerinde sıklıkla yaşanan "Circular Import" (döngüsel içe aktarma) krizlerini önlemek için Application Factory yapısının ne kadar kritik olduğunu anladım. Projeyi en baştan modüler ve Blueprint yapısıyla kurmanın, gelecekte eklenecek siber güvenlik modülleri için temiz bir genişleme alanı sağladığını kavradım.
 
-Flask-Migrate ve Flask-Login gibi temel kütüphanelerin yapılandırılması.
+### Sonraki Oturum İçin Notlar
+* **Oturum 2 Hedefi:** Veritabanı modellerinin SQLAlchemy 2.0 standartlarında tasarlanması.
 
-Plan'da Sorguladıklarım
-Sorgu 1 (Güvenlik): .env dosyasının oluşturulur oluşturulmaz .gitignore dosyasına eklenip eklenmeyeceğini sordum.
+---
 
-Neden: Siber güvenlik odaklı bir projede, hassas verilerin (SECRET_KEY, DB URL) GitHub gibi halka açık platformlara sızması kabul edilemez bir risk teşkil eder.
+## Oturum 2 [15.05.2026] [16:00 - 17:15]
 
-Sorgu 2 (Modern Mimari): Veritabanı modellerinde SQLAlchemy 2.x'in modern Mapped ve mapped_column yapısının kullanılacağını teyit ettim.
+### Hedef
+Kullanıcı (User) ve Zafiyet (Vulnerability) veritabanı modellerinin tasarlanması, ilişkilerin kurulması ve Flask-Migrate entegrasyonu.
 
-Neden: Projenin gelecekteki ölçeklenebilirliği ve tip güvenliği (type hinting) için güncel standartları kullanmak kritiktir.
+### Kullandığım Mod ve Model
+* **Mod:** Plan Modu
+* **Model:** Gemini 3 Pro (Antigravity)
 
-Üretilen Kodda Düzelttiklerim
-Ajanın planını onaylamadan önce, gereksiz paketlerin (requirements.txt) eklenmesini engelledim ve sadece dökümanda belirtilen zorunlu kütüphaneleri tutmasını sağladım.
+### Verdiğim Promptlar
+1. **Ana İstek:** `app/models.py` içinde `User` ve `Vulnerability` modellerinin tanımlanması. Kullanıcılar ile zafiyetler arasında bire-çok (One-to-Many) ilişki kurulması.
 
-Klasör seçimini (Open Folder) bizzat yaparak dosyaların doğru hiyerarşide oluşmasını denetledim.
+### Ajanın Önerdiği Plan
+Ajan, Flask-SQLAlchemy kullanarak modelleri tanımlamayı ve `flask db init` komutlarıyla veritabanı göç mekanizmasını (migration) başlatmayı önerdi.
 
-Karşılaştığım Hatalar ve Çözümler
-Durum: İlk aşamada klasör seçilmediği için ajan dosyaları geçici bir alana kurmaya çalıştı.
+### Plan'da Sorduysam / Müdahalelerim
+* **Kritik Müdahale:** Ajanın eski Flask-SQLAlchemy (1.x) tarzı `db.Column` ve `db.String` önerisini reddettim. Hocanın rubriğindeki modern kodlama kuralına uymak adına **SQLAlchemy 2.0 Mapped ve mapped_column** yapısını kullanması talimatını verdim.
 
-Çözüm: "Open Folder" komutuyla yerel dizini bağladım ve ajanı yeni klasör üzerinden tekrar planlama yapmaya zorlayarak süreci düzelttim.
+### Karşılaştığım Hatalar ve Çözümler
+* İlk migration sırasında model ilişkisindeki `back_populates` parametresinin yazım hatasından kaynaklı kilitlenme yaşandı; manuel müdahale ile harf hatası düzeltilerek `flask db migrate` başarıyla mühürlendi.
 
-Bu Oturumdan Öğrendiğim
-Antigravity IDE üzerinde "Plan Mode" kullanmanın, geliştiricinin "Mimar" rolünü nasıl pekiştirdiğini gördüm. Yapay zekaya doğrudan kod yazdırmak yerine, önce stratejiyi onaylatmanın hata payını minimize ettiğini fark ettim.
+### Bu Oturumdan Öğrendiğim
+SQLAlchemy 2.0 ile gelen tip güvenli (Type-hinted) `Mapped` mimarisinin, veri tabanı modellerini daha okunabilir kıldığını ve kod editörlerinin hata yakalama performansını artırdığını öğrendim. AI ajanlarının sıklıkla eski (1.x) dökümantasyon alışkanlıklarıyla kod üretebildiğini, bu yüzden bir mimar olarak güncel standartları (upgrade kurallarını) bilip ajanı yönlendirmenin şart olduğunu fark ettim.
 
-Sonraki Oturum İçin Notlar
-Veritabanı modellerini (Kullanıcı, Zafiyet, Aksiyon tabloları) tasarlamak.
+### Sonraki Oturum İçin Notlar
+* **Oturum 3 Hedefi:** Kullanıcı kayıt (Register) formlarının ve arayüzünün siber güvenlik temasında giydirilmesi.
 
-İlk veritabanı migrasyonunu (Alembic/Flask-Migrate) gerçekleştirmek.
+---
 
+## Oturum 3 [16.05.2026] [18:00 - 19:15]
 
+### Hedef
+Hocanın proje dökümanındaki "Prompt 5" yönergesine uygun olarak, Flask-WTF ve Bootstrap 5 tabanlı, siber güvenlik temalı kullanıcı kayıt (Register) akışını uçtan uca kurmak.
 
+### Kullandığım Mod ve Model
+* **Mod:** Plan Modu
+* **Model:** Gemini 3 Pro (Antigravity)
 
+### Verdiğim Promptlar
+1. **Ana İstek:** `app/auth/forms.py` içinde `RegisterForm` oluşturulması, `routes.py` içine `/register` rotasının eklenerek şifrenin scrypt ile hash'lenmesi ve `register.html` arayüzünün base şablondan miras alacak şekilde siber temada kurulması.
+2. **Tasarım ve Mimari Revizyonu:** Ajanın ilk planındaki açık sorulara istinaden, standart Bootstrap renkleri yerine 'JetBrains Mono' fontlu, neon yeşil parlayan hover efektli (`.btn-cyber`) özel CSS yazılması ve login rotasının şimdilik taslak bırakılması talimatı.
+3. **Arayüz Düzeltme (Fast Modu):** Kayıt sayfasındaki başlığın harf arası boşluklarının (`letter-spacing`) dağınık durması üzerine, başlığın nizami ve okunaklı olacak şekilde `>_ Sisteme Kayıt Ol` formatına çekilmesi isteği.
 
+### Ajanın Önerdiği Plan
+Ajan, `base.html` dosyasına Bootstrap 5 CDN bağlantılerini eklemeyi, `forms.py`, `routes.py` ve `register.html` dosyalarını sıfırdan oluşturmayı içeren detaylı bir plan sundu. Şifre hashleme katmanını model üzerinden tetiklemeyi ve CSRF korumasını eklemeyi plana dahil etti.
 
+### Plan'da Sorduysam / Müdahalelerim
+* Ajanın login rotasını tamamen taşımak istemesine karşı çıktım; "küçük adımlarla ilerleme" kuralına sadık kalmak adına giriş (login) mekanizmasını Oturum 4'e bıraktım ve burayı şimdilik sadece placeholder (taslak) yapmasını istedim.
+* Standart arayüz önerisini reddederek, projenin siber güvenlik odaklı ruhuna uyması için siber terminal estetiği ve özel buton gölgelendirmeleri dayattım.
 
-Oturum 2 — 15 Mayıs 2026 — 18:30 - 19:15
-Hedef
-SQLAlchemy 2.0 (Mapped/mapped_column) standartlarında User, Vulnerability ve Action modellerini inşa etmek. Veritabanı şemasını vulntracker.db dosyasına fiziksel olarak mühürlemek ve ilk migrasyon döngüsünü tamamlamak.
+### Karşılaştığım Hatalar, Çözümler ve Kanıtlar
+* **Hata 1 (İdari/Çevre):** PowerShell üzerinde sanal ortamı ateşlerken `UnauthorizedAccess (Execution Policy)` hatasıyla karşılaşıldı.
+  * **Çözüm:** `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process` komutu işletilerek güvenlik politikası sadece mevcut terminal süreci için esnetildi ve `venv` aktif edildi.
+* **Hata 2 (Mimari/Kritik):** Form doldurulup gönderildiğinde veya sayfaya erişilmek istendiğinde `Exception: Missing user_loader or request_loader` (500 Internal Server Error) hatası alındı.
+  * **Kanıt Görseli:** ![Hata Mesajı](img/oturum3_hata_mesaji.png)
+  * **Çözüm:** Ajanın Flask-Login entegrasyonu kurarken kullanıcı oturum köprüsünü eksik bıraktığı fark edildi. Dönüt verilerek `app/models.py` içerisine SQLAlchemy 2.x standartlarına uygun `db.session.get(User, int(user_id))` yapısını kullanan `@login_manager.user_loader` fonksiyonu başarıyla entegre edildi ve hata kalıcı olarak çözüldü.
+  * **Çözüm Planı Görseli:** ![Çözüm Planı](img/oturum3_cozum_plani.png)
 
-Kullandığım Mod ve Model
-Mod: Plan & Act Mode (Mimariden uygulama aşamasına geçişte ve hata ayıklama süreçlerinde kullanıldı).
+### Başarılı Sonuç ve Uygulama Görseli
+Arayüzdeki harf dağınıklığı giderildikten ve mimari yama yapıldıktan sonra kayıt sayfası sorunsuz şekilde ayağa kalktı:
+![Çalışan Kayıt Sayfası](img/oturum3_basarili_ui.png)
 
-Model: Gemini 3.1 Pro (High)
+### Bu Oturumdan Öğrendiğim
+AI ajanlarına kısıt verildiğinde (örneğin: login'i henüz yazma), bu kısıtların bağlı olduğu diğer kütüphane mekanizmalarını (Flask-Login'in user_loader beklentisi gibi) kırabileceğini veya eksik bırakabileceğini yaşayarak tecrübe ettim. Bir mimar olarak üretilen planları ve hata loglarını (traceback) satır satır okumanın, körü körü onaylamamanın projeyi çökmekten kurtaran tek mekanizma olduğunu kavradım.
 
-Plan'da Sorguladıklarım & Kararlarım
-Sorgu 1 (Güvenlik Mimarisi): Şifre hashleme mekanizmasında hangi metodun kullanılacağını sorguladım.
-
-Karar: Werkzeug 3.0+ standartlarında, kaba kuvvet saldırılarına karşı yüksek direnç gösteren scrypt metodu tercih edildi.
-
-Sorgu 2 (Veri Bütünlüğü): Zafiyet ciddiyeti (Severity) ve durum (Status) alanlarının nasıl tutulacağını planladım.
-
-Karar: Python Enum yapısı kullanılarak veritabanı düzeyinde kısıtlama (constraint) sağlandı; bu sayede sisteme sadece tanımlı parametrelerin girilmesi garanti altına alındı.
-
-Sorgu 3 (Denetim İzi): Siber güvenlik dökümantasyonu standartları gereği işlemlerin takibini sorguladım.
-
-Karar: Her zafiyet üzerindeki değişikliği (kim, ne zaman, ne yaptı) kayıt altına alan Action tablosu mimariye dahil edildi.
-
-Karşılaştığım Hatalar ve Çözümler
-Durum: flask db migrate komutu çalıştırıldığında "No changes in schema detected" uyarısı alındı ve tablolar algılanmadı.
-
-Teşhis: Modellerin app/__init__.py içerisinde app_context (uygulama bağlamı) altında import edilmediği, dolayısıyla Flask'ın modellerden haberdar olmadığı tespit edildi. Ayrıca models.py içinde "Circular Import" (Döngüsel Bağlantı) hatası saptandı.
-
-Çözüm: app/__init__.py dosyasına from app import models köprüsü kuruldu. Mevcut migrations klasörü temizlenerek terminal üzerinden manuel olarak init-migrate-upgrade döngüsü başarıyla tamamlandı.
-
-### Oturum 2 Görsel Kanıtları
-
-![Modern Mapped ve Enum Yapısı](./img/oturum2_models.png)
-*Görsel 1: SQLAlchemy 2.0 standartlarında hazırlanan veri modelleri.*
-
-<br>
-
-![Flask-Migrate Terminal Çıktısı](./img/oturum2_terminal.png)
-*Görsel 2: Veritabanı şemasının terminal üzerinden mühürlenme anı.*
-
-<br>
-
-![Binary Veritabanı Dosyası](./img/oturum2_db_file.png)
-*Görsel 3: instance/ klasörü altında oluşan vulntracker.db dosyası.*
-
-<br>
-
-Bu Oturumdan Öğrendiğim
-Yapay zeka ile geliştirme yaparken "Application Factory" gibi kompleks mimarilerde, AI'nın bazen dosyalar arası bağlantıları (import) atlayabildiğini gördüm. Bu noktada terminal çıktılarını doğru okumanın ve manuel müdahale yeteneğinin (Terminal Hakimiyeti) projeyi kilitleyen hataları çözmede ne kadar kritik olduğunu tecrübe ettim.
-
-Sonraki Oturum İçin Notlar
-Flask-Login ve Flask-WTF kullanarak Kullanıcı Kayıt (Register) ve Giriş (Login) sisteminin Blueprint yapısıyla kurulması.
-
-scrypt hashleme mekanizmasının veritabanı yazma testlerinin yapılması.
-
-
-
-
-
-
+### Sonraki Oturum İçin Notlar
+* **Oturum 4 Hedefi:** Tam işlevsel Kullanıcı Giriş (Login) ve Çıkış (Logout) sisteminin kurulması, session yönetiminin tamamlanması.
