@@ -2,6 +2,4 @@ from flask import Blueprint
 
 bp = Blueprint('auth', __name__)
 
-@bp.route('/login')
-def login():
-    return "Giriş Sayfası (Yapım Aşamasında)"
+from app.auth import routes

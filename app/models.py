@@ -5,7 +5,7 @@ from sqlalchemy import String, Integer, Text, ForeignKey, DateTime, Float, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import db
+from app import db, login_manager
 
 # --- Enums ---
 class UserRole(enum.Enum):
@@ -54,6 +54,10 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) -> str:
         return f'<User {self.username}>'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.get(User, int(user_id))
 
 class Vulnerability(db.Model):
     __tablename__ = 'vulnerabilities'
