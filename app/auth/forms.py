@@ -1,7 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from app.models import User
+
+class LoginForm(FlaskForm):
+    username = StringField('Kullanıcı Adı', validators=[
+        DataRequired(message="Lütfen kullanıcı adınızı girin.")
+    ])
+    password = PasswordField('Şifre', validators=[
+        DataRequired(message="Lütfen şifrenizi girin.")
+    ])
+    remember = BooleanField('Beni Hatırla')
+    submit = SubmitField('Giriş Yap')
 
 class RegisterForm(FlaskForm):
     username = StringField('Kullanıcı Adı', validators=[
