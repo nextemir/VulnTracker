@@ -84,13 +84,13 @@ Ajan, `base.html` dosyasına Bootstrap 5 CDN bağlantılerini eklemeyi, `forms.p
 * **Hata 1 (İdari/Çevre):** PowerShell üzerinde sanal ortamı ateşlerken `UnauthorizedAccess (Execution Policy)` hatasıyla karşılaşıldı.
   * **Çözüm:** `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process` komutu işletilerek güvenlik politikası sadece mevcut terminal süreci için esnetildi ve `venv` aktif edildi.
 * **Hata 2 (Mimari/Kritik):** Form doldurulup gönderildiğinde veya sayfaya erişilmek istendiğinde `Exception: Missing user_loader or request_loader` (500 Internal Server Error) hatası alındı.
-  * **Kanıt Görseli:** ![Hata Mesajı](img/oturum3_hata_mesaji.png)
+ * **Kanıt Görseli:** ![Hata Mesajı](./img/oturum3_hata_mesaji.png)
   * **Çözüm:** Ajanın Flask-Login entegrasyonu kurarken kullanıcı oturum köprüsünü eksik bıraktığı fark edildi. Dönüt verilerek `app/models.py` içerisine SQLAlchemy 2.x standartlarına uygun `db.session.get(User, int(user_id))` yapısını kullanan `@login_manager.user_loader` fonksiyonu başarıyla entegre edildi ve hata kalıcı olarak çözüldü.
-  * **Çözüm Planı Görseli:** ![Çözüm Planı](img/oturum3_cozum_plani.png)
+ * **Çözüm Planı Görseli:** ![Çözüm Planı](./img/oturum3_cozum_plani.png)
 
 ### Başarılı Sonuç ve Uygulama Görseli
 Arayüzdeki harf dağınıklığı giderildikten ve mimari yama yapıldıktan sonra kayıt sayfası sorunsuz şekilde ayağa kalktı:
-![Çalışan Kayıt Sayfası](img/oturum3_basarili_ui.png)
+![Çalışan Kayıt Sayfası](./img/oturum3_basarili_ui.png)
 
 ### Bu Oturumdan Öğrendiğim
 AI ajanlarına kısıt verildiğinde (örneğin: login'i henüz yazma), bu kısıtların bağlı olduğu diğer kütüphane mekanizmalarını (Flask-Login'in user_loader beklentisi gibi) kırabileceğini veya eksik bırakabileceğini yaşayarak tecrübe ettim. Bir mimar olarak üretilen planları ve hata loglarını (traceback) satır satır okumanın, körü körü onaylamamanın projeyi çökmekten kurtaran tek mekanizma olduğunu kavradım.
