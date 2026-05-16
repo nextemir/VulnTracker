@@ -21,6 +21,7 @@ Ajan; `run.py`, `config.py`, `app/__init__.py` ve blueprint klasörlerini içere
 
 ### Karşılaştığım Hatalar ve Çözümler
 * Herhangi bir mimari hata alınmadı, paket bağımlılıkları pürüzsüz yüklendi.
+* **Uygulama İskeleti Görseli:** Projenin ilk kurulumundaki Application Factory klasör hiyerarşisi ve temel dosya yapısı `docs/img/oturum1_proje_iskeleti.png` adıyla kanıt klasörüne mühürlenmiştir.
 
 ### Bu Oturumdan Öğrendiğim
 Geleneksel Flask projelerinde sıklıkla yaşanan "Circular Import" (döngüsel içe aktarma) krizlerini önlemek için Application Factory yapısının ne kadar kritik olduğunu anladım. Projeyi en baştan modüler ve Blueprint yapısıyla kurmanın, gelecekte eklenecek siber güvenlik modülleri için temiz bir genişleme alanı sağladığını kavradım.
@@ -50,6 +51,8 @@ Ajan, Flask-SQLAlchemy kullanarak modelleri tanımlamayı ve `flask db init` kom
 
 ### Karşılaştığım Hatalar ve Çözümler
 * İlk migration sırasında model ilişkisindeki `back_populates` parametresinin yazım hatasından kaynaklı kilitlenme yaşandı; manuel müdahale ile harf hatası düzeltilerek `flask db migrate` başarıyla mühürlendi.
+
+* **Veritabanı Göçü (Migration) Görseli:** `flask db migrate` komutu sonrası veritabanında SQLAlchemy 2.0 standartlarında tabloların başarılı şekilde oluşturulduğunu gösteren terminal log çıktısı `docs/img/oturum2_database_migration.png` adıyla kanıt klasörüne mühürlenmiştir.
 
 ### Bu Oturumdan Öğrendiğim
 SQLAlchemy 2.0 ile gelen tip güvenli (Type-hinted) `Mapped` mimarisinin, veri tabanı modellerini daha okunabilir kıldığını ve kod editörlerinin hata yakalama performansını artırdığını öğrendim. AI ajanlarının sıklıkla eski (1.x) dökümantasyon alışkanlıklarıyla kod üretebildiğini, bu yüzden bir mimar olarak güncel standartları (upgrade kurallarını) bilip ajanı yönlendirmenin şart olduğunu fark ettim.
