@@ -13,12 +13,6 @@ class UserRole(enum.Enum):
     ANALYST = "Analyst"
     VIEWER = "Viewer"
 
-class SeverityLevel(enum.Enum):
-    CRITICAL = "Critical"
-    HIGH = "High"
-    MEDIUM = "Medium"
-    LOW = "Low"
-
 class VulnStatus(enum.Enum):
     OPEN = "Open"
     IN_PROGRESS = "In Progress"
@@ -40,7 +34,7 @@ class User(UserMixin, db.Model):
     # timezone-aware datetime kullanımı
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
-    vulnerabilities: Mapped[List["Vulnerability"]] = relationship(back_populates="reporter")
+    vulnerabilities: Mapped[List["Vulnerability"]] = relationship(back_populates="user")
     actions: Mapped[List["Action"]] = relationship(back_populates="user")
 
     def set_password(self, password: str) -> None:
@@ -63,26 +57,16 @@ class Vulnerability(db.Model):
     __tablename__ = 'vulnerabilities'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(150), index=True)
-    description: Mapped[str] = mapped_column(Text)
-    
-    # Python enum ile veritabanında (CHECK constraint / Enum tipi) tutarlılık sağlanır
-    severity: Mapped[SeverityLevel] = mapped_column(Enum(SeverityLevel), index=True)
-    status: Mapped[VulnStatus] = mapped_column(Enum(VulnStatus), index=True, default=VulnStatus.OPEN)
-    
-    cvss_score: Mapped[Optional[float]] = mapped_column(Float)
-    cve_id: Mapped[Optional[str]] = mapped_column(String(20))
+    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    severity: Mapped[str] = mapped_column(String(20))
+    status: Mapped[VulnStatus] = mapped_column(Enum(VulnStatus), default=VulnStatus.OPEN)
     
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), 
-        default=lambda: datetime.now(timezone.utc), 
-        onupdate=lambda: datetime.now(timezone.utc)
-    )
     
-    reporter_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
-    reporter: Mapped["User"] = relationship(back_populates="vulnerabilities")
+    user: Mapped["User"] = relationship(back_populates="vulnerabilities")
     actions: Mapped[List["Action"]] = relationship(back_populates="vulnerability", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
@@ -105,4 +89,3 @@ class Action(db.Model):
 
     def __repr__(self) -> str:
         return f'<Action {self.action_type} on Vuln {self.vulnerability_id}>'
-      
