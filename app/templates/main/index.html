@@ -30,21 +30,23 @@
                     </td>
                     <td>
                         {% if vuln.severity|lower == 'critical' or vuln.severity|lower == 'kritik' %}
-                            <span class="badge bg-danger border border-danger shadow-danger">KRİTİK</span>
+                        <span class="badge bg-danger border border-danger shadow-danger">KRİTİK</span>
                         {% elif vuln.severity|lower == 'high' or vuln.severity|lower == 'yüksek' %}
-                            <span class="badge bg-warning text-dark border border-warning shadow-warning">YÜKSEK</span>
+                        <span class="badge bg-warning text-dark border border-warning shadow-warning">YÜKSEK</span>
                         {% elif vuln.severity|lower == 'medium' or vuln.severity|lower == 'orta' %}
-                            <span class="badge bg-info text-dark border border-info shadow-info">ORTA</span>
+                        <span class="badge bg-info text-dark border border-info shadow-info">ORTA</span>
                         {% elif vuln.severity|lower == 'low' or vuln.severity|lower == 'düşük' %}
-                            <span class="badge bg-success border border-success shadow-success">DÜŞÜK</span>
+                        <span class="badge bg-success border border-success shadow-success">DÜŞÜK</span>
                         {% else %}
-                            <span class="badge bg-secondary">{{ vuln.severity|upper }}</span>
+                        <span class="badge bg-secondary">{{ vuln.severity|upper }}</span>
                         {% endif %}
                     </td>
-                    <td><span class="text-cyber-muted">{{ vuln.date_posted.strftime('%Y-%m-%d %H:%M') if vuln.date_posted else 'Belirtilmedi' }}</span></td>
+                    <td><span class="text-cyber-muted">{{ vuln.date_posted.strftime('%Y-%m-%d %H:%M') if
+                            vuln.date_posted else 'Belirtilmedi' }}</span></td>
                     <td class="text-end">
-                        <a href="#" class="btn btn-sm btn-outline-info cyber-btn-sm" title="Detayları Gör">
-                            <i class="bi bi-eye"></i> Detay
+                        <a href="{{ url_for('main.edit_vulnerability', vuln_id=vuln.id) }}"
+                            class="btn btn-sm btn-outline-info font-monospace">
+                            <i class="bi bi-pencil-square"></i> Detay / Düzenle
                         </a>
                     </td>
                 </tr>
@@ -64,39 +66,41 @@
     {% if vulnerabilities.pages > 1 %}
     <nav aria-label="Vulnerability Pagination" class="mt-4">
         <ul class="pagination justify-content-center pagination-cyber gap-2">
-            
+
             <li class="page-item {% if not vulnerabilities.has_prev %}disabled{% endif %}">
-                <a class="page-link cyber-page-link" 
-                   href="{% if vulnerabilities.has_prev %}{{ url_for('main.index', page=vulnerabilities.prev_num) }}{% else %}#{% endif %}" 
-                   aria-label="Previous">
+                <a class="page-link cyber-page-link"
+                    href="{% if vulnerabilities.has_prev %}{{ url_for('main.index', page=vulnerabilities.prev_num) }}{% else %}#{% endif %}"
+                    aria-label="Previous">
                     <span aria-hidden="true">&laquo; Önceki</span>
                 </a>
             </li>
 
             {% for page_num in vulnerabilities.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-                {% if page_num %}
-                    {% if vulnerabilities.page == page_num %}
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link cyber-page-link-active">{{ page_num }}</span>
-                        </li>
-                    {% else %}
-                        <li class="page-item">
-                            <a class="page-link cyber-page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
-                        </li>
-                    {% endif %}
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link cyber-page-link border-0 bg-transparent text-cyber-muted">...</span></li>
-                {% endif %}
+            {% if page_num %}
+            {% if vulnerabilities.page == page_num %}
+            <li class="page-item active" aria-current="page">
+                <span class="page-link cyber-page-link-active">{{ page_num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link cyber-page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num
+                    }}</a>
+            </li>
+            {% endif %}
+            {% else %}
+            <li class="page-item disabled"><span
+                    class="page-link cyber-page-link border-0 bg-transparent text-cyber-muted">...</span></li>
+            {% endif %}
             {% endfor %}
 
             <li class="page-item {% if not vulnerabilities.has_next %}disabled{% endif %}">
-                <a class="page-link cyber-page-link" 
-                   href="{% if vulnerabilities.has_next %}{{ url_for('main.index', page=vulnerabilities.next_num) }}{% else %}#{% endif %}" 
-                   aria-label="Next">
+                <a class="page-link cyber-page-link"
+                    href="{% if vulnerabilities.has_next %}{{ url_for('main.index', page=vulnerabilities.next_num) }}{% else %}#{% endif %}"
+                    aria-label="Next">
                     <span aria-hidden="true">Sonraki &raquo;</span>
                 </a>
             </li>
-            
+
         </ul>
     </nav>
     {% endif %}
