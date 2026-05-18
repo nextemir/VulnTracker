@@ -241,3 +241,47 @@ Geliştirme süreçlerinde yapay zeka ajanlarının zaman zaman senkronizasyon k
 
 
 
+
+
+## Oturum 7 [18.05.2026] [12:35 - 15:10]
+
+### Hedef
+Projenin ana görsel anayasasını oluşturacak Base Template (Jinja2 Kalıpları) ve Frontend Tasarımı (UI/UX) Entegrasyonu safhasının icra edilmesi. Zafiyet Yönetim Matrisinin mantıksal eksikliklerinin (Silme motoru ve aktif/çözülmüş durum kontrolü) ve Türkiye yerel saatiyle (UTC+3) senkronize işleyen dinamik zaman damgalarının backend katmanına kilitlenmesi. Çift tablolu yapının arayüzde yarattığı dikey kalabalığın dezenfekte edilerek çözülmüş zafiyetlerin tamamen bağımsız ve izole bir arşiv sayfasına (`archived_index.html`) taşınması.
+
+### Kullandığım Mod ve Model
+* **Mod:** Otonom Refaktör, Sistem Entegrasyonu & UX Dezenfeksiyon Modu
+* **Model:** Claude 3.5 Sonnet & Gemini 3 Flash (Kompozit Mühimmat Geçişi)
+
+### Verdiğim Promptlar
+1. **Ana İstek:** `base.html` dosyasının dinamik terminal promptu ile kurulması, `Vulnerability` modeline `is_resolved` alanının enjekte edilmesi, düzenleme formuna kırmızı neon silme butonunun giydirilmesi ve çift tablonun iptal edilerek arşivi listeleyen bağımsız bir `archived_index` rotasının otonom olarak inşa edilmesi.
+
+### Ajanın Önerdiği Plan
+Ajan; genel şablon omurgasını kurmayı, durum yönetiminde 3 adımlı stratejik planı ve arşiv geçişi için otonom yazma rotasını içeren bir refaktör planı sundu.
+
+### Plan'da Sorduysam / Müdahalelerim
+* Ajanın arayüz linkini kolay yoldan değiştirme eğilimini reddedip backend'deki fonksiyon adını kurumsal standardımız olan `add_vulnerability` çizgisine kilitledim.
+* Claude Sonnet'in arşiv planında eski navigasyon linkine (`new_vulnerability`) sapma eğilimini fark ederek kod yazım aşamasına geçilmeden önce havada kilitledim.
+* Ajanlara tam ekran kod döktürmek yerine, plan onaylandıktan sonra arka plandaki yazma motoruyla dosyaları doğrudan güncellettim.
+
+### Karşılaştığım Hatalar ve Çözümler
+* Veritabanına yeni alan eklenince alınan `OperationalError` hatası, aktif `instance/vulntracker.db` dosyasının tespiti ve el ile fiziksel imhası sonrası `db.create_all()` tetiklenerek çözüldü.
+* Ajanın kök dizindeki sahte `app.db` dosyasını silmeye çalışması engellenerek doğru veritabanı deşifre edildi.
+* Arka plan otonom yazma motorunun işlem limitine toslaması krizinde inisiyatif alınarak Claude Sonnet'e geçiş yapıldı.
+* Arşiv sayfası oluşturulurken alınan `TemplateNotFound` hatası, otonom motorun dosyayı doğru fiziksel konuma mühürlemesi emredilerek çözüldü.
+* **Zafiyet Silme Motoru Görseli:** Silme işleminin güvenli şekilde arayüze eklenmesi planı `docs/img/oturum7_01_zafiyet_silme_motoru_plani.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Durum Yönetimi Görseli:** is_resolved bayrağının model ve form katmanlarında projelendirilmesi `docs/img/oturum7_02_durum_yonetimi_arayuz_plani.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Veritabanı Şema Hatası Görseli:** SQLite sütun eksikliği sebebiyle fırlatılan kriz anı `docs/img/oturum7_03_veritabanı_sema_hatasi.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Aktif Veritabanı Keşfi Görseli:** Ajanın silemediği aktif veritabanı dosyasının tespiti `docs/img/oturum7_04_aktif_veritabani_kesfi.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Ajan Kota Kesintisi Görseli:** Otonom motorun limitlere takıldığı an `docs/img/oturum7_05_ajan_kota_kesintisi.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Çift Tablo Denetimi Görseli:** Alt tablonun iptal edilerek izole arşiv sayfasına geçiş kararı `docs/img/oturum7_06_pano_cift_tablo_denetimi.png` adıyla kanıt klasörüne mühürlenmiştir.
+* **Şablon Bulunamadı Görseli:** Dosya yolunun yanlış konuma yazılmasıyla alınan hata logu `docs/img/oturum7_07_sablon_bulunamadi_hatasi.png` adıyla kanıt klasörüne mühürlenmiştir.
+
+### Bu Oturumdan Öğrendiğim
+Geliştirme süreçlerinde yapay zeka ajanlarının kota veya sistemsel I/O kilitlenmelerine çarptığı kriz anlarında siber analist refleksleriyle local terminale ve diske doğrudan müdahale etmenin operasyon kurtarmadaki hayati önemini gördüm. SQL tabanlı veritabanlarında şema değişikliklerinde diski fiziksel olarak temizlemek veya doğru dosya adına nokta atışı operasyon yapmak gerektiğini tecrübe ettim. Ayrıca kurumsal SOC arayüzlerinde tüm verileri tek sayfaya yığmanın UX odağını dağıttığını, izole sayfa mimarisinin analist konforunu üst seviyeye çıkardığını yaşayarak kavradım.
+
+### Sonraki Oturum İçin Notlar
+* **Oturum 8 Hedefi:** Sistemin ikinci büyük kalesi olan Kullanıcı Kimlik Doğrulama (Authentication - Auth Blueprint) ve Giriş/Kayıt Sayfalarının Siberpunk UI/UX Entegrasyonu safhasına geçilmesi.
+
+
+
+
