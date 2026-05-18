@@ -5,6 +5,10 @@ from app import db
 from app.models import Vulnerability
 from sqlalchemy import select
 from app.main.forms import VulnerabilityForm
+from datetime import datetime, timezone, timedelta
+
+# Türkiye Saat Dilimi: UTC+3 (Kalıcı yaz saati)
+TR_TZ = timezone(timedelta(hours=3))
 
 # Blueprint nesnen (Oturum yapısına uygun 'bp')
 bp = Blueprint('main', __name__)
@@ -31,7 +35,8 @@ def add_vulnerability():
             title=form.title.data,
             description=form.description.data,
             severity=form.severity.data,
-            user=current_user
+            user=current_user,
+            created_at=datetime.now(TR_TZ)  # UTC+3 Türkiye Zaman Damgası
         )
         db.session.add(vulnerability)
         try:
