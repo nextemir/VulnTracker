@@ -1,6 +1,6 @@
 # app/main/forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, SubmitField
+from wtforms import StringField, TextAreaField, SelectField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length
 
 class VulnerabilityForm(FlaskForm):
@@ -19,5 +19,7 @@ class VulnerabilityForm(FlaskForm):
         ('ORTA', 'Orta (Medium)'),
         ('DÜŞÜK', 'Düşük (Low)')
     ], validators=[DataRequired(message="Lütfen bir kritiklik derecesi seçiniz.")])
+    
+    is_resolved = BooleanField('Zafiyet Çözüldü mü (Resolved)?')
     
     submit = SubmitField('Zafiyeti Sisteme İşle')

@@ -14,8 +14,8 @@ bp = Blueprint('main', __name__)
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
-    # Modern SQLAlchemy 2.0 select sorgusu
-    query = select(Vulnerability).order_by(Vulnerability.id.desc())
+    # Modern SQLAlchemy 2.0 select sorgusu (sadece açık olanları listele)
+    query = select(Vulnerability).where(Vulnerability.is_resolved == False).order_by(Vulnerability.id.desc())
     # Sayfa başına 10 kayıt getirecek pagination motoru
     vulnerabilities = db.paginate(query, page=page, per_page=10, error_out=False)
     
@@ -24,7 +24,7 @@ def index():
 
 @bp.route('/vulnerability/add', methods=['GET', 'POST'])
 @login_required
-def create_vulnerability():
+def add_vulnerability():
     form = VulnerabilityForm()
     if form.validate_on_submit():
         vulnerability = Vulnerability(
@@ -55,6 +55,7 @@ def edit_vulnerability(vuln_id):
         vulnerability.title = form.title.data
         vulnerability.description = form.description.data
         vulnerability.severity = form.severity.data
+        vulnerability.is_resolved = form.is_resolved.data
         try:
             db.session.commit()
             flash('Zafiyet kaydı başarıyla güncellendi.', 'success')
@@ -66,6 +67,7 @@ def edit_vulnerability(vuln_id):
         form.title.data = vulnerability.title
         form.description.data = vulnerability.description
         form.severity.data = vulnerability.severity
+        form.is_resolved.data = vulnerability.is_resolved
         
     return render_template('main/vulnerability_form.html', title='Zafiyeti Düzenle', form=form, vulnerability=vulnerability)
 
@@ -80,4 +82,4 @@ def delete_vulnerability(vuln_id):
     except Exception as e:
         db.session.rollback()
         flash('Silme işlemi sırasında hata oluştu, işlem durduruldu.', 'danger')
-    return redirect(url_for('main.index')) 
+    return redirect(url_for('main.index'))

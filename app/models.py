@@ -1,7 +1,7 @@
 from typing import Optional, List
 from datetime import datetime, timezone
 import enum
-from sqlalchemy import String, Integer, Text, ForeignKey, DateTime, Float, Enum
+from sqlalchemy import String, Integer, Text, ForeignKey, DateTime, Float, Enum, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -61,6 +61,7 @@ class Vulnerability(db.Model):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     severity: Mapped[str] = mapped_column(String(20))
     status: Mapped[VulnStatus] = mapped_column(Enum(VulnStatus), default=VulnStatus.OPEN)
+    is_resolved: Mapped[bool] = mapped_column(Boolean, default=False)
     
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     

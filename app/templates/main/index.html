@@ -2,16 +2,76 @@
 
 {% block title %}Dashboard - VulnTracker{% endblock %}
 
+{% block styles %}
+<style>
+    /* Cyber Table Styles */
+    .table-cyber {
+        --bs-table-bg: transparent;
+        --bs-table-color: #c9d1d9;
+        --bs-table-border-color: #30363d;
+        border: 1px solid #30363d;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .table-cyber th {
+        background-color: #161b22;
+        color: #2ea043;
+        border-bottom: 2px solid #2ea043;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .table-cyber tbody tr {
+        transition: all 0.3s ease;
+    }
+    .table-cyber tbody tr:hover {
+        background-color: rgba(46, 160, 67, 0.1) !important;
+        box-shadow: inset 0 0 10px rgba(46, 160, 67, 0.2);
+    }
+    .table-cyber td {
+        background-color: transparent;
+        border-color: #30363d;
+        vertical-align: middle;
+    }
+    
+    /* Cyber Pagination Styles */
+    .pagination-cyber .page-item .page-link {
+        background-color: #161b22;
+        color: #2ea043;
+        border: 1px solid #30363d;
+        transition: all 0.3s ease;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .pagination-cyber .page-item .page-link:hover {
+        background-color: rgba(46, 160, 67, 0.1);
+        color: #2ea043;
+        box-shadow: 0 0 10px #238636;
+        border-color: #2ea043;
+    }
+    .pagination-cyber .page-item.active .page-link {
+        background-color: #2ea043;
+        color: #0d1117;
+        border-color: #2ea043;
+        font-weight: bold;
+        box-shadow: 0 0 10px #238636;
+    }
+    .pagination-cyber .page-item.disabled .page-link {
+        background-color: #161b22;
+        color: #6e7681;
+        border-color: #30363d;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row mb-4 align-items-center">
         <div class="col">
-            <h2 class="text-cyber-primary mb-0"><i class="bi bi-shield-lock"></i> Zafiyet Panosu</h2>
+            <h2 class="text-cyber-primary mb-0" style="color: #2ea043; text-shadow: 0 0 5px rgba(46, 160, 67, 0.5);"><i class="bi bi-shield-lock"></i> Zafiyet Panosu</h2>
         </div>
     </div>
 
     <div class="table-responsive cyber-container">
-        <table class="table table-dark table-hover table-cyber mb-0 align-middle">
+        <table class="table table-cyber mb-0 align-middle">
             <thead>
                 <tr>
                     <th scope="col" style="width: 5%">#ID</th>
@@ -24,35 +84,37 @@
             <tbody>
                 {% for vuln in vulnerabilities.items %}
                 <tr>
-                    <td><span class="text-cyber-muted">#{{ vuln.id }}</span></td>
+                    <td><span class="text-secondary">#{{ vuln.id }}</span></td>
                     <td>
                         <strong class="text-light">{{ vuln.title }}</strong>
                     </td>
                     <td>
-                        {% if vuln.severity|lower == 'critical' or vuln.severity|lower == 'kritik' %}
+                        {% if vuln.severity|lower in ['critical', 'kritik', 'kri̇ti̇k'] %}
                         <span class="badge bg-danger border border-danger shadow-danger">KRİTİK</span>
-                        {% elif vuln.severity|lower == 'high' or vuln.severity|lower == 'yüksek' %}
+                        {% elif vuln.severity|lower in ['high', 'yüksek', 'yuksek'] %}
                         <span class="badge bg-warning text-dark border border-warning shadow-warning">YÜKSEK</span>
-                        {% elif vuln.severity|lower == 'medium' or vuln.severity|lower == 'orta' %}
+                        {% elif vuln.severity|lower in ['medium', 'orta'] %}
                         <span class="badge bg-info text-dark border border-info shadow-info">ORTA</span>
-                        {% elif vuln.severity|lower == 'low' or vuln.severity|lower == 'düşük' %}
+                        {% elif vuln.severity|lower in ['low', 'düşük', 'dusuk'] %}
                         <span class="badge bg-success border border-success shadow-success">DÜŞÜK</span>
                         {% else %}
                         <span class="badge bg-secondary">{{ vuln.severity|upper }}</span>
                         {% endif %}
                     </td>
-                    <td><span class="text-cyber-muted">{{ vuln.date_posted.strftime('%Y-%m-%d %H:%M') if
-                            vuln.date_posted else 'Belirtilmedi' }}</span></td>
+                    <td>
+                        <!-- Tarih filtreleme mühürlemesi -->
+                        <span class="text-secondary">{{ vuln.created_at.strftime('%d.%m.%Y %H:%M') if vuln.created_at else 'ZAMAN_YOK' }}</span>
+                    </td>
                     <td class="text-end">
                         <a href="{{ url_for('main.edit_vulnerability', vuln_id=vuln.id) }}"
-                            class="btn btn-sm btn-outline-info font-monospace">
-                            <i class="bi bi-pencil-square"></i> Detay / Düzenle
+                            class="btn btn-sm btn-cyber">
+                            <i class="bi bi-terminal"></i> Detay / Düzenle
                         </a>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" class="text-center py-4 text-cyber-muted">
+                    <td colspan="5" class="text-center py-4 text-secondary">
                         <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                         Sistemde kayıtlı zafiyet bulunamadı.
                     </td>
@@ -68,7 +130,7 @@
         <ul class="pagination justify-content-center pagination-cyber gap-2">
 
             <li class="page-item {% if not vulnerabilities.has_prev %}disabled{% endif %}">
-                <a class="page-link cyber-page-link"
+                <a class="page-link"
                     href="{% if vulnerabilities.has_prev %}{{ url_for('main.index', page=vulnerabilities.prev_num) }}{% else %}#{% endif %}"
                     aria-label="Previous">
                     <span aria-hidden="true">&laquo; Önceki</span>
@@ -79,22 +141,21 @@
             {% if page_num %}
             {% if vulnerabilities.page == page_num %}
             <li class="page-item active" aria-current="page">
-                <span class="page-link cyber-page-link-active">{{ page_num }}</span>
+                <span class="page-link">{{ page_num }}</span>
             </li>
             {% else %}
             <li class="page-item">
-                <a class="page-link cyber-page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num
-                    }}</a>
+                <a class="page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
             </li>
             {% endif %}
             {% else %}
             <li class="page-item disabled"><span
-                    class="page-link cyber-page-link border-0 bg-transparent text-cyber-muted">...</span></li>
+                    class="page-link border-0 bg-transparent text-secondary">...</span></li>
             {% endif %}
             {% endfor %}
 
             <li class="page-item {% if not vulnerabilities.has_next %}disabled{% endif %}">
-                <a class="page-link cyber-page-link"
+                <a class="page-link"
                     href="{% if vulnerabilities.has_next %}{{ url_for('main.index', page=vulnerabilities.next_num) }}{% else %}#{% endif %}"
                     aria-label="Next">
                     <span aria-hidden="true">Sonraki &raquo;</span>
