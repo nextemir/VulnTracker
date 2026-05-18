@@ -184,3 +184,60 @@ Modern Flask mimarilerinde Blueprint yapılanmaları kurulurken şablon dosyalar
 
 ### Sonraki Oturum İçin Notlar
 * **Oturum 6 Hedefi:** Sisteme yeni zafiyet ekleme, mevcut zafiyetlerin detayına girip bilgilerini güncelleme ve geçersiz zafiyetleri sistemden tamamen silebilme (CRUD) özelliklerinin backend ve ön yüz form altyapılarının inşa edilmesi.
+
+
+
+
+
+
+
+
+
+
+## Oturum 6 [18.05.2026] [11:00 - 12:30]
+
+### Hedef
+Platformun çekirdek fonksiyonel motoru olan **Zafiyet Yönetimi (CRUD - Create, Read, Update, Delete)** altyapısının backend ve ön yüz seviyesinde inşa edilmesi; yeni zafiyet ekleme, mevcut kayıtların detayını güvenli çekip düzenleme ve silme rotalarının try-except/rollback zırhlarıyla veritabanına kilitlenmesi, iki ayrı HTML yükü yerine dinamik kendini uyarlayan tek bir cyberpunk form şablonunun (`vulnerability_form.html`) ön yüze entegre edilmesi ve Oturum 5'te pasif bırakılan "Detay" köprülerinin bu yeni CRUD motoruna bağlanarak sistemin uçtan uca doğrulanması.
+
+### Kullandığım Mod ve Model
+* **Mod:** Act Modu & Antigravity Panel Denetimi (Donma krizleri ve lojistik kopuklukların manuel müdahaleyle çözülmesi için)
+* **Model:** Gemini 3 Flash (Antigravity Agent)
+
+### Verdiğim Promptlar
+* **Ana İstek:** `app/main/__init__.py` içerisine zafiyet ekleme, düzenleme ve silme işlevlerini üstlenecek rotaların modern SQLAlchemy 2.0 select mimarisiyle yazılması. Yazılan kodların defansif derinlik (Defense in Depth) standartlarına uygun olarak try-except bloklarıyla korunması, hata anında `db.session.rollback()` çalıştırılması ve ön yüzde tek bir `vulnerability_form.html` şablonunun siber punk/SOC terminal estetiğiyle ayağa kaldırılması.
+
+### Ajanın Önerdiği Plan
+Ajan; ilk olarak `Flask-WTF` form yapısını doğrulamayı, ardından backend üzerinde üç ana CRUD rotasını kurmayı, ön yüzde ekleme ve düzenleme sayfaları için iki ayrı şablon dosyası açmayı planladı. Ancak analist süzgeciyle yapılan mimari oyun kurma ve müdahaleler neticesinde ajanın planı revize edilerek Clean Code çizgisine çekildi.
+
+### Plan'da Sorduysam / Müdahalelerim
+* Ajanın veritabanı commit işlemlerini doğrudan yalın ve korumasız halde çakma planını sorguladım. SQLite yazma/silme anında yaşanacak anlık kilitlenmelerde sunucunun 500 Internal Error vererek stack trace sızıntısı üretmesini engellemek için tüm commit operasyonlarına `try-except` zırhı giydirip `except` anında `db.session.rollback()` tetiklettim.
+* Ajanın ekleme ve düzenleme işlemleri için iki ayrı HTML şablonu (`create_vulnerability.html` ve `edit_vulnerability.html`) üretme planına karşı çıktım. Dosya yükünü ve kod tekrarını engellemek adına tek bir ortak `vulnerability_form.html` yazdırarak, içeriğe gelen nesne durumuna göre arayüzün dinamik şekillenmesini zorunlu kıldım.
+* Geliştirme esnasında yapay zeka ajanının 10 dakika boyunca loading ekranında kalıp donması/kilitlenmesi üzerine sürece manuel müdahale ettim, onay tetiğini el ile çekerek repoyu kurtardım. Ajanın kilitlenme sebebiyle eksik bıraktığı o son lojistik köprüyü, yani `index.html` üzerindeki pasif `href="#"` linklerini el ile yeni yazdığımız edit rotasına dinamik olarak (`url_for('main.edit_vulnerability', vuln_id=vuln.id)`) bağladım.
+
+### Karşılaştığım Hatalar, Çözümler ve Kanıtlar
+* **Hata 1 (Form Yapılandırma ve Onay Kısıtı):** Ajanın ön yüz ile backend arasındaki veri dezenfeksiyonunu tam doğrulamadan doğrudan şablonlara atlama eğilimi siber denetime takılmıştır.
+  * **Çözüm:** `app/main/forms.py` dosyası üzerinde milimetrik denetim yapılarak girdilerin karakter sınırları ve `SelectField` tip kısıtlamaları kilitlenmiş, ajandan tam kod onayı alınmıştır.
+  * **Kanıt Görseli:** Form mimarisinin kurumsal nizamda başarıyla oluşturulduğunu gösteren ilk teftiş anı `docs/img/oturum6_forms_py_kod_incelemesi.png` adıyla arşive mühürlenmiştir.
+* **Hata 2 (Backend Commit Korumasızlığı / Veri Güvenliği):** CRUD rotalarında `db.session.commit()` komutlarının herhangi bir hata yakalama mekanizması olmadan çıplak bırakıldığı teşhis edilmiştir.
+  * **Çözüm:** Olası SQLite kilitlenmelerine ve veri zehirlenmelerine karşı backend rotaları defansif programlama ilkeleriyle güncellenmiş, işlem başarısız olduğunda oturumu güvenli şekilde geri alan `rollback` komutları enjekte edilmiştir.
+  * **Kanıt Görseli:** Backend rotaları yapılandırılırken siber güvenlik açıklarının tarandığı o ilk hazırlık safhası `docs/img/oturum6_backend_rotalari_try_except_zirhi.png` adıyla mühürlenmiştir.
+* **Hata 3 (Geliştirme Paneli Senkronizasyon Kaybı / Donma):** Ön yüz şablon derlemesine geçileceği sırada Antigravity Agent arka plan senkronizasyon krizine girmiş ve arayüz 10 dakika boyunca loading durumunda kilitli kalmıştır.
+  * **Çözüm:** Oturum manuel olarak onaylanmış, ajanın yarıda bıraktığı kod yapısı analist tarafından el ile devralınarak Jinja2 entegrasyon köprüleri eksiksiz olarak tamamlanmıştır.
+  * **Kanıt Görseli:** Ajanın donma öncesinde rotaları işleyip şablon aşamasına geçmeye çalıştığı o lojistik kırılma anı `docs/img/oturum6_dinamik_override_record_butonu.png` adıyla klasöre mühürlenmiştir.
+* **Hata 4 (Yetkisiz HTTP İstek Manipülasyonu / Sızma Girişimi):** Oturum açmamış siber aktörlerin veya botların URL satırından doğrudan `/vulnerability/add` rotasını çağırarak sisteme sahte veri basma riski (IDOR/Erişim Kontrolü İhlali) analiz edilmiştir.
+  * **Çözüm:** Rotaların tepesine `@login_required` zırhı çakılmış ve yerel sunucuda gizli sekme açılarak sızma testi icra edilmiştir. Sistemin yetkisiz isteği havada yakalayarak HTTP 302 yönlendirmesiyle Giriş ekranına fırlattığı ve neon mavisi kurumsal uyarı bastığı doğrulanmıştır.
+  * **Kanıt Görseli:** Gizli sekmeden yapılan sızma girişiminin siber bir kale gibi engellendiği o anın canlı test kanıtı `docs/img/oturum6_yetkisiz_erisim_barikati.png` adıyla mühürlenmiştir.
+
+### Başarılı Sonuç
+İnatçı yapay zeka donmalarına ve mimari eksikliklere rağmen manuel müdahaleyle ayağa kaldırılan CRUD motoru %100 başarıyla doğrulandı. Tek bir esnek şablondan veritabanı durumuna göre; ekleme modunda yeşil neon renkli `[ EXECUTE_INSERT ]`, düzenleme modunda ise turuncu neon renkli `[ OVERRIDE_RECORD ]` butonlarını render eden dinamik ön yüz kusursuz çalıştı. `db.get_or_404` seçimiyle sahte ID manipülasyonları elendi, try-except zırhlarıyla Flask'ın çökme riskleri sıfırlandı ve ana panodaki detay butonları yeni motora nizamî olarak bağlandı. Proje repoya push edilmeye hazır kararlı sürüme ulaştı.
+
+### Bu Oturumdan Öğrendiğim
+Geliştirme süreçlerinde yapay zeka ajanlarının zaman zaman senkronizasyon kaybı yaşayıp donabileceğini, bu gibi durumlarda siber analistin kontrolü eline alıp manuel müdahale (Incident Response) yapmasının projeyi lojistik olarak nasıl kurtardığını öğrendim. Backend operasyonlarında hata sızıntısını ve stack trace sızıntılarını önlemek adına `db.get_or_404` kullanmanın kurumsal önemini, veritabanı kilitlenmelerine karşı defansif programlamanın (`rollback`) hayat kurtardığını uygulamalı olarak gördüm. Ayrıca Clean Code standartları gereği ön yüzde dinamik şablon yönetiminin kod karmaşasını nasıl yarı yarıya azalttığını tecrübe ettim.
+
+### Sonraki Oturum İçin Notlar
+* **Oturum 7 Hedefi:** Projenin ana görsel anayasasını oluşturacak olan **Base Template (Jinja2 Kalıpları) ve Frontend Tasarımı (UI/UX) Entegrasyonu** safhasına geçilmesi. Tüm alt şablonların mirasını devralacağı ana omurganın (`app/templates/base.html`) sıfırdan inşa edilmesi; sayfalar arası dinamik başlık ve içerik bloklarının kilitlenmesi, sistem genelinde fırlatılan tüm siber uyarıları (flash mesajları) Bootstrap 5 `alert-dismissible` neon kutularıyla karşılayacak global mesaj motorunun kurulması, üst menüde projenin siberpunk logosunu ve o an oturumu açık olan sistem analistinin dinamik profil verilerini (`current_user.username`) işleyecek SOC terminal arayüz tasarımlarının responsive (duyarlı) şekilde giydirilmesi.
+
+
+
+
+
