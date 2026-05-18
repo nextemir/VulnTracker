@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Arşiv — VulnTracker{% endblock %}
+
+{% block styles %}
+<style>
+    /* Cyber Archive Table — Siber Mavi / Şeffaf Gri Tonlar */
+    .table-cyber-archive {
+        --bs-table-bg: transparent;
+        --bs-table-color: #8b949e;
+        --bs-table-border-color: #21262d;
+        border: 1px solid #21262d;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .table-cyber-archive th {
+        background-color: #0d1117;
+        color: #58a6ff;
+        border-bottom: 2px solid #1f6feb;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .table-cyber-archive tbody tr {
+        transition: all 0.3s ease;
+    }
+    .table-cyber-archive tbody tr:hover {
+        background-color: rgba(88, 166, 255, 0.07) !important;
+        box-shadow: inset 0 0 10px rgba(88, 166, 255, 0.1);
+    }
+    .table-cyber-archive td {
+        background-color: transparent;
+        border-color: #21262d;
+        vertical-align: middle;
+        color: #6e7681;
+    }
+    /* Mavi Neon Buton — Arşiv Geri Alma */
+    .btn-cyber-info {
+        background-color: transparent;
+        color: #58a6ff;
+        border: 1px solid #1f6feb;
+        transition: all 0.3s ease;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .btn-cyber-info:hover {
+        background-color: rgba(31, 111, 235, 0.15);
+        color: #79c0ff;
+        box-shadow: 0 0 10px #1f6feb;
+        border-color: #58a6ff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- Arşiv Sayfa Başlığı -->
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2 class="mb-0" style="color: #58a6ff; text-shadow: 0 0 5px rgba(88, 166, 255, 0.4); font-family: 'JetBrains Mono', monospace;">
+                <i class="bi bi-archive"></i> [ ARŞİVLENMİŞ / KAPATILMIŞ SİBER REKORLAR ]
+            </h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-cyber">
+                <i class="bi bi-arrow-return-left"></i> Dashboard'a Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-cyber-archive mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%">#ID</th>
+                    <th scope="col" style="width: 45%">Başlık</th>
+                    <th scope="col" style="width: 15%">Kritiklik</th>
+                    <th scope="col" style="width: 20%">Bildirim Tarihi</th>
+                    <th scope="col" style="width: 15%" class="text-end">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vuln in archived_vulnerabilities %}
+                <tr>
+                    <td><span class="text-secondary">#{{ vuln.id }}</span></td>
+                    <td><s class="text-secondary">{{ vuln.title }}</s></td>
+                    <td>
+                        {% if vuln.severity|lower in ['critical', 'kritik', 'kri̇ti̇k'] %}
+                        <span class="badge bg-danger opacity-50">KRİTİK</span>
+                        {% elif vuln.severity|lower in ['high', 'yüksek', 'yuksek'] %}
+                        <span class="badge bg-warning text-dark opacity-50">YÜKSEK</span>
+                        {% elif vuln.severity|lower in ['medium', 'orta'] %}
+                        <span class="badge bg-info text-dark opacity-50">ORTA</span>
+                        {% elif vuln.severity|lower in ['low', 'düşük', 'dusuk'] %}
+                        <span class="badge bg-success opacity-50">DÜŞÜK</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ vuln.severity|upper }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="text-secondary">{{ vuln.created_at.strftime('%d.%m.%Y %H:%M') if vuln.created_at else 'ZAMAN_YOK' }}</span>
+                    </td>
+                    <td class="text-end">
+                        <!-- POST Formlu Geri Alma Butonu -->
+                        <form method="POST" action="{{ url_for('main.activate_vulnerability', vuln_id=vuln.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-cyber-info">
+                                <i class="bi bi-arrow-counterclockwise"></i> Yeniden Aktif Et
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-secondary">
+                        <i class="bi bi-archive fs-2 d-block mb-2"></i>
+                        Arşivde kapatılmış zafiyet kaydı bulunamadı.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

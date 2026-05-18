@@ -18,13 +18,19 @@ bp = Blueprint('main', __name__)
 @login_required
 def index():
     page = request.args.get('page', 1, type=int)
-    # Modern SQLAlchemy 2.0 select sorgusu (sadece açık olanları listele)
+    # Sadece aktif (çözülmemiş) zafiyetler
     query = select(Vulnerability).where(Vulnerability.is_resolved == False).order_by(Vulnerability.id.desc())
-    # Sayfa başına 10 kayıt getirecek pagination motoru
     vulnerabilities = db.paginate(query, page=page, per_page=10, error_out=False)
-    
-    # Ajanın yazdığı o cyberpunk index.html dosyasını çağırıyoruz
     return render_template('main/index.html', vulnerabilities=vulnerabilities)
+
+@bp.route('/archive')
+@login_required
+def archived_index():
+    # Sadece kapatılmış (çözülmüş) zafiyetler
+    query = select(Vulnerability).where(Vulnerability.is_resolved == True).order_by(Vulnerability.id.desc())
+    archived_vulnerabilities = db.session.scalars(query).all()
+    return render_template('main/archived_index.html', archived_vulnerabilities=archived_vulnerabilities)
+
 
 @bp.route('/vulnerability/add', methods=['GET', 'POST'])
 @login_required
@@ -87,4 +93,17 @@ def delete_vulnerability(vuln_id):
     except Exception as e:
         db.session.rollback()
         flash('Silme işlemi sırasında hata oluştu, işlem durduruldu.', 'danger')
+    return redirect(url_for('main.index'))
+
+@bp.route('/vulnerability/<int:vuln_id>/activate', methods=['POST'])
+@login_required
+def activate_vulnerability(vuln_id):
+    vulnerability = db.get_or_404(Vulnerability, vuln_id)
+    vulnerability.is_resolved = False
+    try:
+        db.session.commit()
+        flash('Zafiyet başarıyla yeniden aktif edildi.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Geri alma işlemi sırasında bir hata oluştu.', 'danger')
     return redirect(url_for('main.index'))

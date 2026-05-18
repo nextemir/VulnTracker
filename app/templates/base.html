@@ -145,6 +145,10 @@
                         <!-- Zafiyet ekleme rotası doğru şekilde bağlandı -->
                         <a class="nav-link" href="{{ url_for('main.add_vulnerability') }}">Yeni Zafiyet</a>
                     </li>
+                    <li class="nav-item">
+                        <!-- Arşiv rotası — siber mavi neon -->
+                        <a class="nav-link" href="{{ url_for('main.archived_index') }}" style="color: #58a6ff !important; transition: color 0.3s ease, text-shadow 0.3s ease;">Arşiv</a>
+                    </li>
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav ms-auto align-items-center">
